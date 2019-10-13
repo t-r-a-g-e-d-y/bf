@@ -103,15 +103,9 @@ if __name__ == '__main__':
 
         c = program[index]
 
-        if c in '\r\n':
-            index += 1
-            continue
-
         symbol = symbols.get(c)
 
-        if not symbol:
-            pass
-        elif c in '[]':
+        if c in '[]':
             index = symbol(program, index)
             continue
         else:
