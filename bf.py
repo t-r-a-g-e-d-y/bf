@@ -27,14 +27,17 @@ def print_byte():
 
 def get_input():
     global data
-    byte = input('>>> ')
-    if not byte:
+    try:
+        byte = f'{input(">>> ")}\n'
+    except EOFError:
+        # don't modify data on EOF
+        print()
         return
-    else:
-        try:
-            data[dataptr] = int(byte)
-        except ValueError:
-            data[dataptr] = ord(byte[0])
+
+    try:
+        data[dataptr] = int(byte)
+    except ValueError:
+        data[dataptr] = ord(byte[0])
 
 def jump_forward(program, index):
     count = 0
