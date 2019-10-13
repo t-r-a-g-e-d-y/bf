@@ -81,7 +81,12 @@ symbols = {
 }
 
 def read_program(fn):
-    pass
+    symbols = '><+-.,[]'
+
+    with open(fn, 'r') as f:
+        program = f.read()
+
+    return [c for c in program if c in symbols]
 
 def build_jump_pairs(program):
     pass
@@ -89,8 +94,7 @@ def build_jump_pairs(program):
 if __name__ == '__main__':
     import sys
 
-    with open(sys.argv[1], 'r') as f:
-        program = f.read()
+    program = read_program(sys.argv[1])
 
     index = 0
     while True:
