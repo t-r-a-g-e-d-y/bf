@@ -85,10 +85,10 @@ def build_jump_pairs(program):
             try:
                 opening_pairs[stack.pop()] = idx
             except IndexError:
-                raise IndexError(f'Mismatched ] bracket at index {idx}')
+                raise IndexError(f'Mismatched ] bracket')
 
     if stack:
-        raise IndexError(f'Mismatched [ bracket at index {stack.pop()}')
+        raise IndexError(f'Mismatched [ bracket')
 
     closing_pairs = {k: v for k, v in zip(opening_pairs.values(), opening_pairs.keys())}
     return {'opening': opening_pairs, 'closing': closing_pairs}
