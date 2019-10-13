@@ -39,35 +39,21 @@ def get_input():
     except ValueError:
         data[dataptr] = ord(byte[0])
 
-def jump_forward(program, index):
-    count = 0
+def jump_forward(index, jump_pairs):
     if data[dataptr] == 0:
-        index += 1
-        while True:
-            if program[index] == '[':
-                count += 1
-            elif program[index] == ']' and count > 0:
-                count -= 1
-            elif program[index] == ']':
-                break
-            index += 1
+        index = jump_pairs['opening'][index] + 1
+    else:
+        index +=1
 
-    return index + 1
+    return index
 
-def jump_backward(program, index):
-    count = 0
+def jump_backward(index, jump_pairs):
     if data[dataptr] != 0:
-        index -= 1
-        while True:
-            if program[index] == ']':
-                count += 1
-            elif program[index] == '[' and count > 0:
-                count -= 1
-            elif program[index] == '[':
-                break
-            index -= 1
+        index = jump_pairs['closing'][index] + 1
+    else:
+        index +=1
 
-    return index + 1
+    return index
 
 symbols = {
     '>': incr_ptr,
@@ -77,7 +63,7 @@ symbols = {
     '.': print_byte,
     ',': get_input,
     '[': jump_forward,
-    ']': jump_backward,
+    ']': jump_backward
 }
 
 def read_program(fn):
@@ -89,12 +75,33 @@ def read_program(fn):
     return [c for c in program if c in symbols]
 
 def build_jump_pairs(program):
-    pass
+    stack = []
+    opening_pairs = {}
+
+    for idx, c in enumerate(program):
+        if c == '[':
+            stack.append(idx)
+        elif c == ']':
+            try:
+                opening_pairs[stack.pop()] = idx
+            except IndexError:
+                raise IndexError(f'Mismatched ] bracket at index {idx}')
+
+    if stack:
+        raise IndexError(f'Mismatched [ bracket at index {stack.pop()}')
+
+    closing_pairs = {k: v for k, v in zip(opening_pairs.values(), opening_pairs.keys())}
+    return {'opening': opening_pairs, 'closing': closing_pairs}
 
 if __name__ == '__main__':
     import sys
 
     program = read_program(sys.argv[1])
+    try:
+        jump_pairs = build_jump_pairs(program)
+    except IndexError as err:
+        print(err)
+        exit()
 
     index = 0
     while True:
@@ -105,8 +112,11 @@ if __name__ == '__main__':
 
         symbol = symbols.get(c)
 
-        if c in '[]':
-            index = symbol(program, index)
+        if c == '[':
+            index = symbol(index, jump_pairs)
+            continue
+        elif c == ']':
+            index = symbol(index, jump_pairs)
             continue
         else:
             symbol()
