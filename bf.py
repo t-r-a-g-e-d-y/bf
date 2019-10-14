@@ -20,9 +20,9 @@ def decr_data():
     data[dataptr] -= 1
 
 def print_byte():
-    if data[dataptr] in range(0,256):
+    try:
         print(chr(data[dataptr]), end='')
-    else:
+    except ValueError:
         print(data[dataptr], end='')
 
 def get_input():
@@ -112,10 +112,7 @@ if __name__ == '__main__':
 
         symbol = symbols.get(c)
 
-        if c == '[':
-            index = symbol(index, jump_pairs)
-            continue
-        elif c == ']':
+        if c in '[]':
             index = symbol(index, jump_pairs)
             continue
         else:
