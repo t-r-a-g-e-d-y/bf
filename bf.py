@@ -43,7 +43,7 @@ def jump_forward(index, jump_pairs):
     if data[dataptr] == 0:
         index = jump_pairs['opening'][index] + 1
     else:
-        index +=1
+        index += 1
 
     return index
 
@@ -51,7 +51,7 @@ def jump_backward(index, jump_pairs):
     if data[dataptr] != 0:
         index = jump_pairs['closing'][index] + 1
     else:
-        index +=1
+        index += 1
 
     return index
 
@@ -96,7 +96,12 @@ def build_jump_pairs(program):
 if __name__ == '__main__':
     import sys
 
-    program = read_program(sys.argv[1])
+    try:
+        program = read_program(sys.argv[1])
+    except FileNotFoundError:
+        print(f'File not found: {sys.argv[1]}')
+        exit()
+
     try:
         jump_pairs = build_jump_pairs(program)
     except IndexError as err:
