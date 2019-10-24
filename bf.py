@@ -67,12 +67,10 @@ symbols = {
 }
 
 def read_program(fn):
-    symbols = '><+-.,[]'
-
     with open(fn, 'r') as f:
         program = f.read()
 
-    return [c for c in program if c in symbols]
+    return [c for c in program if c in symbols.keys()]
 
 def build_jump_pairs(program):
     stack = []
