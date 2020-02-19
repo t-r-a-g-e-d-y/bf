@@ -1,32 +1,29 @@
-data = [0 for _ in range(30000)]
-dataptr = 0
+class BFMachine:
+    def __init__(self):
+        self.data = [0 for _ in range(30000)]
+        self.dataptr = 0
 
-def incr_ptr():
-    global data, dataptr
-    dataptr += 1
-    if dataptr >= len(data):
-        data.extend([0 for _ in range(30000)])
+def incr_ptr(bf):
+    bf.dataptr += 1
+    if bf.dataptr >= len(bf.data):
+        bf.data.extend([0 for _ in range(30000)])
 
-def decr_ptr():
-    global dataptr
-    dataptr -= 1
+def decr_ptr(bf):
+    bf.dataptr -= 1
 
-def incr_data():
-    global data
-    data[dataptr] += 1
+def incr_data(bf):
+    bf.data[bf.dataptr] += 1
 
-def decr_data():
-    global data
-    data[dataptr] -= 1
+def decr_data(bf):
+    bf.data[bf.dataptr] -= 1
 
-def print_byte():
+def print_byte(bf):
     try:
-        print(chr(data[dataptr]), end='')
+        print(chr(bf.data[bf.dataptr]), end='')
     except ValueError:
-        print(data[dataptr], end='')
+        print(bf.data[bf.dataptr], end='')
 
-def get_input():
-    global data
+def get_input(bf):
     try:
         byte = f'{input(">>> ")}\n'
     except EOFError:
@@ -35,20 +32,20 @@ def get_input():
         return
 
     try:
-        data[dataptr] = int(byte)
+        bf.data[bf.dataptr] = int(byte)
     except ValueError:
-        data[dataptr] = ord(byte[0])
+        bf.data[bf.dataptr] = ord(byte[0])
 
-def jump_forward(index, jump_pairs):
-    if data[dataptr] == 0:
+def jump_forward(bf, index, jump_pairs):
+    if bf.data[bf.dataptr] == 0:
         index = jump_pairs['opening'][index] + 1
     else:
         index += 1
 
     return index
 
-def jump_backward(index, jump_pairs):
-    if data[dataptr] != 0:
+def jump_backward(bf, index, jump_pairs):
+    if bf.data[bf.dataptr] != 0:
         index = jump_pairs['closing'][index] + 1
     else:
         index += 1
@@ -106,6 +103,8 @@ if __name__ == '__main__':
         print(err)
         exit()
 
+    bf = BFMachine()
+
     index = 0
     while True:
         if index >= len(program):
@@ -116,10 +115,10 @@ if __name__ == '__main__':
         symbol = symbols.get(c)
 
         if c in '[]':
-            index = symbol(index, jump_pairs)
+            index = symbol(bf, index, jump_pairs)
             continue
         else:
-            symbol()
+            symbol(bf)
 
         index += 1
 
