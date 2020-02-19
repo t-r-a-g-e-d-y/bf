@@ -88,6 +88,25 @@ def build_jump_pairs(program):
     closing_pairs = {k: v for k, v in zip(opening_pairs.values(), opening_pairs.keys())}
     return {'opening': opening_pairs, 'closing': closing_pairs}
 
+def bf_run(bfm, program, jump_pairs):
+    index = 0
+
+    while True:
+        if index >= len(program):
+            exit()
+
+        c = program[index]
+
+        symbol = symbols.get(c)
+
+        if c in '[]':
+            index = symbol(bfm, index, jump_pairs)
+            continue
+        else:
+            symbol(bfm)
+
+        index += 1
+
 if __name__ == '__main__':
     import sys
 
@@ -103,22 +122,7 @@ if __name__ == '__main__':
         print(err)
         exit()
 
-    bf = BFMachine()
+    bfm = BFMachine()
 
-    index = 0
-    while True:
-        if index >= len(program):
-            exit()
-
-        c = program[index]
-
-        symbol = symbols.get(c)
-
-        if c in '[]':
-            index = symbol(bf, index, jump_pairs)
-            continue
-        else:
-            symbol(bf)
-
-        index += 1
+    bf_run(bfm, program, jump_pairs)
 
