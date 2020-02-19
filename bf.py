@@ -1,11 +1,11 @@
-data = [0] * 30000
+data = [0 for _ in range(30000)]
 dataptr = 0
 
 def incr_ptr():
     global data, dataptr
     dataptr += 1
     if dataptr >= len(data):
-        data.extend([0] * 30000)
+        data.extend([0 for _ in range(30000)])
 
 def decr_ptr():
     global dataptr
