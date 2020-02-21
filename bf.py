@@ -12,6 +12,8 @@ def incr_ptr(bf):
 def decr_ptr(bf):
     ''' < command '''
     bf.dataptr -= 1
+    if bf.dataptr < 0:
+        exit(f'Data pointer out of range ({bf.dataptr})')
 
 def incr_data(bf):
     ''' + command '''
