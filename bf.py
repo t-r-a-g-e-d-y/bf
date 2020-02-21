@@ -34,9 +34,9 @@ def decr_data(bf):
 def print_byte(bf):
     ''' . command '''
     try:
-        print(chr(bf.data[bf.dataptr]), end='')
+        print(chr(bf.current_cell), end='')
     except ValueError:
-        print(bf.data[bf.dataptr], end='')
+        print(bf.current_cell, end='')
 
 def get_input(bf):
     ''' , command '''
@@ -48,13 +48,13 @@ def get_input(bf):
         return
 
     try:
-        bf.data[bf.dataptr] = int(byte)
+        bf.current_cell = int(byte)
     except ValueError:
-        bf.data[bf.dataptr] = ord(byte[0])
+        bf.current_cell = ord(byte[0])
 
 def jump_forward(bf, index, jump_pairs):
     ''' [ command '''
-    if bf.data[bf.dataptr] == 0:
+    if bf.current_cell == 0:
         index = jump_pairs['opening'][index] + 1
     else:
         index += 1
@@ -63,7 +63,7 @@ def jump_forward(bf, index, jump_pairs):
 
 def jump_backward(bf, index, jump_pairs):
     ''' ] command '''
-    if bf.data[bf.dataptr] != 0:
+    if bf.current_cell != 0:
         index = jump_pairs['closing'][index] + 1
     else:
         index += 1
