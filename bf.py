@@ -52,7 +52,7 @@ def jump_backward(bf, index, jump_pairs):
 
     return index
 
-symbols = {
+commands = {
     '>': incr_ptr,
     '<': decr_ptr,
     '+': incr_data,
@@ -67,7 +67,7 @@ def read_program(fn):
     with open(fn, 'r') as f:
         program = f.read()
 
-    return [c for c in program if c in symbols.keys()]
+    return [c for c in program if c in commands.keys()]
 
 def build_jump_pairs(program):
     stack = []
@@ -94,13 +94,13 @@ def bf_run(bfm, program, jump_pairs):
     while index < len(program):
         c = program[index]
 
-        symbol = symbols.get(c)
+        command = commands.get(c)
 
         if c in '[]':
-            index = symbol(bfm, index, jump_pairs)
+            index = command(bfm, index, jump_pairs)
             continue
         else:
-            symbol(bfm)
+            command(bfm)
 
         index += 1
 
