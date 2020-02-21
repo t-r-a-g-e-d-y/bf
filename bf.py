@@ -3,6 +3,14 @@ class BFMachine:
         self.data = [0 for _ in range(30000)]
         self.dataptr = 0
 
+    @property
+    def current_cell(self):
+        return self.data[self.dataptr]
+
+    @current_cell.setter
+    def current_cell(self, value):
+        self.data[self.dataptr] = value
+
 def incr_ptr(bf):
     ''' > command '''
     bf.dataptr += 1
@@ -17,11 +25,11 @@ def decr_ptr(bf):
 
 def incr_data(bf):
     ''' + command '''
-    bf.data[bf.dataptr] += 1
+    bf.current_cell += 1
 
 def decr_data(bf):
     ''' - command '''
-    bf.data[bf.dataptr] -= 1
+    bf.current_cell -= 1
 
 def print_byte(bf):
     ''' . command '''
