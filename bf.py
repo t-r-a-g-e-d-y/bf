@@ -4,26 +4,32 @@ class BFMachine:
         self.dataptr = 0
 
 def incr_ptr(bf):
+    ''' > command '''
     bf.dataptr += 1
     if bf.dataptr >= len(bf.data):
         bf.data.extend([0 for _ in range(30000)])
 
 def decr_ptr(bf):
+    ''' < command '''
     bf.dataptr -= 1
 
 def incr_data(bf):
+    ''' + command '''
     bf.data[bf.dataptr] += 1
 
 def decr_data(bf):
+    ''' - command '''
     bf.data[bf.dataptr] -= 1
 
 def print_byte(bf):
+    ''' . command '''
     try:
         print(chr(bf.data[bf.dataptr]), end='')
     except ValueError:
         print(bf.data[bf.dataptr], end='')
 
 def get_input(bf):
+    ''' , command '''
     try:
         byte = f'{input(">>> ")}\n'
     except EOFError:
@@ -37,6 +43,7 @@ def get_input(bf):
         bf.data[bf.dataptr] = ord(byte[0])
 
 def jump_forward(bf, index, jump_pairs):
+    ''' [ command '''
     if bf.data[bf.dataptr] == 0:
         index = jump_pairs['opening'][index] + 1
     else:
@@ -45,6 +52,7 @@ def jump_forward(bf, index, jump_pairs):
     return index
 
 def jump_backward(bf, index, jump_pairs):
+    ''' ] command '''
     if bf.data[bf.dataptr] != 0:
         index = jump_pairs['closing'][index] + 1
     else:
@@ -70,6 +78,7 @@ def read_program(fn):
     return [c for c in program if c in commands.keys()]
 
 def build_jump_pairs(program):
+    ''' Precompute [ and ] jump locations '''
     stack = []
     opening_pairs = {}
 
