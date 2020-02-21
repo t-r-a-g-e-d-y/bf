@@ -91,10 +91,7 @@ def build_jump_pairs(program):
 def bf_run(bfm, program, jump_pairs):
     index = 0
 
-    while True:
-        if index >= len(program):
-            exit()
-
+    while index < len(program):
         c = program[index]
 
         symbol = symbols.get(c)
