@@ -1,7 +1,10 @@
+from collections import deque
+
 class BFMachine:
     def __init__(self):
         self.data = [0 for _ in range(30000)]
         self.dataptr = 0
+        self.input_buffer = deque()
 
     @property
     def current_cell(self):
@@ -40,17 +43,20 @@ def print_byte(bf):
 
 def get_input(bf):
     ''' , command '''
-    try:
-        byte = f'{input(">>> ")}\n'
-    except EOFError:
-        # don't modify data on EOF
-        print()
-        return
+    if bf.input_buffer:
+        bf.current_cell = bf.input_buffer.popleft()
+    else:
+        try:
+            data = f'{input(">>> ")}\n'
+        except EOFError:
+            # don't modify data on EOF
+            print()
+            return
 
-    try:
-        bf.current_cell = int(byte)
-    except ValueError:
-        bf.current_cell = ord(byte[0])
+        bf.current_cell = ord(data[0])
+
+        for c in data[1:]:
+            bf.input_buffer.append(ord(c))
 
 def jump_forward(bf, index, jump_pairs):
     ''' [ command '''
