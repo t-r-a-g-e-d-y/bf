@@ -1,5 +1,8 @@
 from collections import deque
 
+# Number of cells to print when # command is called in a program
+DEUBG_CELL_COUNT = 20
+
 class BFMachine:
     def __init__(self):
         self.data = [0 for _ in range(30000)]
@@ -40,6 +43,11 @@ def print_byte(bf):
         print(chr(bf.current_cell), end='')
     except ValueError:
         print(bf.current_cell, end='')
+
+def debug(bf):
+    ''' # command '''
+    print(bf.data[DEUBG_CELL_COUNT])
+    print(f'Pointer value: {bf.dataptr}')
 
 def get_input(bf):
     ''' , command '''
@@ -84,7 +92,8 @@ commands = {
     '.': print_byte,
     ',': get_input,
     '[': jump_forward,
-    ']': jump_backward
+    ']': jump_backward,
+    '#': debug
 }
 
 def read_program(fn):
