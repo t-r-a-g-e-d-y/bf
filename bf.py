@@ -1,13 +1,28 @@
+import os
+import stat
+import sys
+
 from collections import deque
 
-# Number of cells to print when # command is called in a program
-DEUBG_CELL_COUNT = 20
-
 class BFMachine:
-    def __init__(self):
+    def __init__(self, input_source=sys.stdin, debug_cell_count=20):
         self.data = [0 for _ in range(30000)]
         self.dataptr = 0
         self.input_buffer = deque()
+
+        # The below is so that input from a pipe or a file does not result in
+        # the get_input prompt showing up while printing output or asking
+        # the user for input after the input pipe/file has been read
+        self.input_is_file_or_pipe = False
+        input_mode = os.fstat(0).st_mode
+
+        if input_source != sys.stdin or stat.S_ISFIFO(input_mode):
+            self.input_is_file_or_pipe = True
+            for c in input_source.read():
+                self.input_buffer.append(ord(c))
+
+        # Number of cells to print when # command is called in a program
+        self.debug_cell_count = debug_cell_count
 
     @property
     def current_cell(self):
@@ -46,13 +61,17 @@ def print_byte(bf):
 
 def debug(bf):
     ''' # command '''
-    print(bf.data[:DEUBG_CELL_COUNT])
+    print(bf.data[:bf.debug_cell_count])
     print(f'Pointer value: {bf.dataptr}')
 
 def get_input(bf):
     ''' , command '''
     if bf.input_buffer:
         bf.current_cell = bf.input_buffer.popleft()
+    elif bf.input_is_file_or_pipe:
+        # Empty input queue but program still has instructions to process
+        # Handles a BF program asking for input on EOF
+        return
     else:
         try:
             data = f'{input(">>> ")}\n'
@@ -139,12 +158,18 @@ def bf_run(bfm, program, jump_pairs):
         index += 1
 
 if __name__ == '__main__':
-    import sys
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('file', help='Program read from Brainfuck file')
+    parser.add_argument('input', nargs='?', default=sys.stdin, type=argparse.FileType('r'), help='Read input from file')
+    parser.add_argument('-d', '--debug', type=int, nargs='?', default=20, help='Number of cells to print when debug command is encountered')
+    args = parser.parse_args()
 
     try:
-        program = read_program(sys.argv[1])
+        program = read_program(args.file)
     except FileNotFoundError:
-        print(f'File not found: {sys.argv[1]}')
+        print(f'File not found: {args.file}')
         exit()
 
     try:
@@ -153,7 +178,11 @@ if __name__ == '__main__':
         print(err)
         exit()
 
-    bfm = BFMachine()
+    bfm = BFMachine(args.input, args.debug)
 
-    bf_run(bfm, program, jump_pairs)
+    try:
+        bf_run(bfm, program, jump_pairs)
+    except KeyboardInterrupt:
+        print()
+        exit()
 
