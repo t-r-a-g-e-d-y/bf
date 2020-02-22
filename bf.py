@@ -46,7 +46,7 @@ def print_byte(bf):
 
 def debug(bf):
     ''' # command '''
-    print(bf.data[DEUBG_CELL_COUNT])
+    print(bf.data[:DEUBG_CELL_COUNT])
     print(f'Pointer value: {bf.dataptr}')
 
 def get_input(bf):
