@@ -9,7 +9,7 @@ class BFMachine:
         self.data = [0 for _ in range(30000)]
         self.dataptr = 0
         self.input_buffer = deque()
-        self.cell_max = 2 ** cell_size
+        self.cell_max = 2 ** cell_size - 1
 
         # The below is so that input from a pipe or a file does not result in
         # the get_input prompt showing up while printing output or asking
@@ -47,11 +47,17 @@ def decr_ptr(bf):
 
 def incr_data(bf):
     ''' + command '''
-    bf.current_cell = bf.current_cell % bf.cell_max + 1
+    if bf.current_cell >= bf.cell_max:
+        bf.current_cell = 0
+    else:
+        bf.current_cell += 1
 
 def decr_data(bf):
     ''' - command '''
-    bf.current_cell = bf.current_cell % bf.cell_max - 1
+    if bf.current_cell <= 0:
+        bf.current_cell = bf.cell_max
+    else:
+        bf.current_cell -= 1
 
 def print_byte(bf):
     ''' . command '''
