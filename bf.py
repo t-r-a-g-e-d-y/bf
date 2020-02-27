@@ -5,10 +5,11 @@ import sys
 from collections import deque
 
 class BFMachine:
-    def __init__(self, input_source=sys.stdin, debug_cell_count=20):
+    def __init__(self, input_source=sys.stdin, cell_size=8, debug_cell_count=20):
         self.data = [0 for _ in range(30000)]
         self.dataptr = 0
         self.input_buffer = deque()
+        self.cell_max = 2 ** cell_size
 
         # The below is so that input from a pipe or a file does not result in
         # the get_input prompt showing up while printing output or asking
@@ -46,11 +47,11 @@ def decr_ptr(bf):
 
 def incr_data(bf):
     ''' + command '''
-    bf.current_cell += 1
+    bf.current_cell = bf.current_cell % bf.cell_max + 1
 
 def decr_data(bf):
     ''' - command '''
-    bf.current_cell -= 1
+    bf.current_cell = bf.current_cell % bf.cell_max - 1
 
 def print_byte(bf):
     ''' . command '''
@@ -163,6 +164,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('file', help='Program read from Brainfuck file')
     parser.add_argument('input', nargs='?', default=sys.stdin, type=argparse.FileType('r'), help='Read input from file')
+    parser.add_argument('-c', '--cell-size', type=int, nargs='?', default=8, choices=[8, 16, 32], help='Cell size in bits')
     parser.add_argument('-d', '--debug', type=int, nargs='?', default=20, help='Number of cells to print when debug command is encountered')
     args = parser.parse_args()
 
@@ -178,7 +180,7 @@ if __name__ == '__main__':
         print(err)
         exit()
 
-    bfm = BFMachine(args.input, args.debug)
+    bfm = BFMachine(input_source=args.input, cell_size=args.cell_size, debug_cell_count=args.debug)
 
     try:
         bf_run(bfm, program, jump_pairs)
