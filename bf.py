@@ -150,13 +150,17 @@ def build_jump_pairs(program):
 
 def bf_run(bfm, program, jump_pairs):
     index = 0
+    program_length = len(program)
 
-    while index < len(program):
+    while index < program_length:
         c = program[index]
 
         command = commands.get(c)
 
-        if c in '[]':
+        if not c:
+            # Invalid command
+            continue
+        elif c in '[]':
             index = command(bfm, index, jump_pairs)
             continue
         else:
