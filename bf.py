@@ -126,7 +126,7 @@ def read_program(fn):
     with open(fn, 'r') as f:
         program = f.read()
 
-    return [c for c in program if c in commands.keys()]
+    return [[c, commands.get(c)] for c in program if c in commands.keys()]
 
 def build_jump_pairs(program):
     ''' Precompute [ and ] jump locations '''
@@ -134,9 +134,9 @@ def build_jump_pairs(program):
     opening_pairs = {}
 
     for idx, c in enumerate(program):
-        if c == '[':
+        if c[0] == '[':
             stack.append(idx)
-        elif c == ']':
+        elif c[0] == ']':
             try:
                 opening_pairs[stack.pop()] = idx
             except IndexError:
@@ -155,18 +155,11 @@ def bf_run(bfm, program, jump_pairs):
     while index < program_length:
         c = program[index]
 
-        command = commands.get(c)
-
-        if not c:
-            # Invalid command
-            continue
-        elif c in '[]':
-            index = command(bfm, index, jump_pairs)
-            continue
+        if c[0] in '[]':
+            index = c[1](bfm, index, jump_pairs)
         else:
-            command(bfm)
-
-        index += 1
+            c[1](bfm)
+            index += 1
 
 if __name__ == '__main__':
     import argparse
