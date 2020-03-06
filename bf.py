@@ -153,12 +153,12 @@ def bf_run(bfm, program, jump_pairs):
     program_length = len(program)
 
     while index < program_length:
-        c = program[index]
+        command, op = program[index]
 
-        if c[0] in '[]':
-            index = c[1](bfm, index, jump_pairs)
+        if command in '[]':
+            index = op(bfm, index, jump_pairs)
         else:
-            c[1](bfm)
+            op(bfm)
             index += 1
 
 if __name__ == '__main__':
