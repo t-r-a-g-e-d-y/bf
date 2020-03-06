@@ -7,6 +7,7 @@ from collections import deque
 class BFMachine:
     def __init__(self, input_source=sys.stdin, cell_size=8, debug_cell_count=20):
         self.data = [0 for _ in range(30000)]
+        self.data_length = len(self.data)
         self.dataptr = 0
         self.input_buffer = deque()
         self.cell_max = 2 ** cell_size - 1
@@ -36,8 +37,9 @@ class BFMachine:
 def incr_ptr(bf):
     ''' > command '''
     bf.dataptr += 1
-    if bf.dataptr >= len(bf.data):
+    if bf.dataptr >= bf.data_length:
         bf.data.extend([0 for _ in range(30000)])
+        bf.data_length = len(bf.data)
 
 def decr_ptr(bf):
     ''' < command '''
