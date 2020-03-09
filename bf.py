@@ -170,7 +170,7 @@ if __name__ == '__main__':
     parser.add_argument('file', help='Program read from Brainfuck file')
     parser.add_argument('input', nargs='?', default=sys.stdin, type=argparse.FileType('r'), help='Read input from file')
     parser.add_argument('-c', '--cell-size', type=int, nargs='?', default=8, choices=[8, 16, 32], help='Cell size in bits')
-    parser.add_argument('-d', '--debug', type=int, nargs='?', default=20, help='Number of cells to print when debug command is encountered')
+    parser.add_argument('-d', '--debug', type=int, nargs='?', metavar="N", default=20, help='Number of cells to print when debug command is encountered')
     args = parser.parse_args()
 
     try:
